@@ -26,6 +26,12 @@
                         <li class='nav-item'>
                             <a class='nav-link' href='{% url "index" %}'>Home</a>
                         </li>
+                        <li class='nav-item'>
+                            <a class='nav-link' href='{% url "index" %}'>New Post</a>
+                        </li>
+                        <li class='nav-item'>
+                            <a class='nav-link' href='{% url "index" %}'>My Profile</a>
+                        </li>
                     </ul>
                     <div class='nav-item ml-auto'>
                         <a class='nav-link text-white pl-0' href='{% url "logout" %}'>Logout</a>
@@ -39,7 +45,7 @@
 
     {% block footer %}
         <footer class='page-footer font-small bg-primary pt-4 mt-5'>
-            <div class='footer-copyright text-center py-3 text-light'>© 2021 Copyright [Your Name ]</div>
+            <div class='footer-copyright text-center py-3 text-light'>© 2021 Copyright [Akash]</div>
         </footer>
     {% endblock %}
 
