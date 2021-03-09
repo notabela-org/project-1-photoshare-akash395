@@ -1,6 +1,5 @@
 from django import forms
-from users.models import Profile
-from users.models import Post
+from users.models import *
 
 class EditProfileForm(forms.ModelForm):
     
@@ -23,4 +22,14 @@ class NewPostForm(forms.ModelForm):
         widget = {
             'caption': forms.TextInput(),
             'image': forms.FileInput()
+        }
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('comment',)
+
+        widget = {
+            'comment':forms.TextInput()
         }

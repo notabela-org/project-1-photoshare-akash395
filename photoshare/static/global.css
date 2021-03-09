@@ -13,7 +13,8 @@ footer {
 }
 
 .card {
-    max-width: 50%;
+    max-width: 70%;
+    max-height: 70%;
 }
 .card-img-top {
     height: 30vw;
@@ -21,7 +22,7 @@ footer {
 }
 
 .profile-img-sm {
-    width: 2rem;
-    height: 2rem;
+    width: 4rem;
+    height: 4rem;
     background-size: cover;
 }

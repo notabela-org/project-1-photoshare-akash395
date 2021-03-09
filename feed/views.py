@@ -5,8 +5,9 @@ from django.db.models import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from users.models import *
-from .forms import EditProfileForm, NewPostForm
+from .forms import *
 from django.core.paginator import Paginator
+from django.http import Http404
 
 # Create your views here.
 @login_required
@@ -18,7 +19,7 @@ def index(request):
         homeItem['post'] =post
         try:
             homeItem['profile'] = Profile.objects.get(user = post.user)
-            homeItem['comments'] = Comment.objects.get(post = post)
+            homeItem['comments'] = Comment.objects.filter(post = post)
 
         except ObjectDoesNotExist:
             print("Couldn't retrive profile or comments")
@@ -33,7 +34,36 @@ def index(request):
 
 @login_required
 def post(request,id):
-    return render(request, 'feed/post.html',  {'id':id})
+    form = CommentForm()
+    if request.method == 'POST':
+        form = CommentForm(data=request.POST)
+        if form.is_valid():
+            cleanForm = form.cleaned_data
+            user = request.user
+            post = Post.objects.get(id=id)
+            comment = Comment(user=user,post=post,comment=cleanForm['comment'])
+            comment.save()
+
+            return HttpResponseRedirect(reverse('index'))
+        return render(request,'feed/post.html',{'id':id,'form':form})
+
+    homeItem = {}
+    try:
+        post = Post.objects.get(id=id)
+        homeItem['post'] = post
+        homeItem['profile'] = Profile.objects.get(user=post.user)
+        homeItem['comments'] = []
+        comments = list(Comment.objects.filter(post=post))
+        for item in comments:
+            commentDict = {'comment':item}
+            profile = Profile.objects.get(user=item.user)
+            commentDict['profile'] = profile
+            homeItem['comments'].append(commentDict)
+    except ObjectDoesNotExist:
+        print("Failed to fetch profile or comments")
+        homeItem['comments'] = []
+
+    return render(request,'feed/post.html',{'id':id,'form':form,'homeItem':homeItem})
 
 
 @login_required
@@ -47,7 +77,7 @@ def profile(request,username):
 
 @login_required
 def editprofile(request):
-    print("Edit profile request")
+    
     form = None
     if request.method == 'POST':
         form = EditProfileForm(data=request.POST,files=request.FILES)
@@ -74,7 +104,7 @@ def editprofile(request):
 
 @login_required
 def newpost(request):
-    form = NewPostForm(data={})
+    form = NewPostForm()
     if request.method == 'POST':
         form = NewPostForm(data=request.POST, files= request.FILES)
         if form.is_valid():

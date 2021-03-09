@@ -7,11 +7,11 @@ import datetime
 class Profile(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE,primary_key=True)
-    image = models.ImageField(upload_to ='',default='/default.jpg', blank= True)
+    image = models.ImageField(upload_to ='Profile/',default='/default.jpg', blank= True)
     bio = models.CharField(max_length=350)
 
     def __str__(self):
-        return '{self.user} image: {self.image} bio: {self.bio}'
+        return f'{self.user}'
 
     def get_bio(self):
         return self.bio
@@ -26,6 +26,9 @@ class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True, null = True)
 
+    def __str__(self):
+        return f'{self.user}'
+
     def post_user(self):
         return self.user
 
@@ -35,3 +38,6 @@ class Comment(models.Model):
     post = models.ForeignKey(Post,on_delete=models.CASCADE)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user} comment: {self.comment}'
