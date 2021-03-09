@@ -6,11 +6,35 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from users.models import *
 from .forms import EditProfileForm, NewPostForm
+from django.core.paginator import Paginator
 
 # Create your views here.
 @login_required
 def index(request):
-    return render(request, 'feed/index.html')
+    home = []
+    posts = Post.objects.all()
+    for post in posts:
+        homeItem = {}
+        homeItem['post'] =post
+        try:
+            homeItem['profile'] = Profile.objects.get(user = post.user)
+            homeItem['comments'] = Comment.objects.get(post = post)
+
+        except ObjectDoesNotExist:
+            print("Couldn't retrive profile or comments")
+        home.append(homeItem)
+
+    paginator = Paginator(home, 10)
+
+    page_number = request.GET.get('page')
+    page_obj    = paginator.get_page(page_number)
+    return render(request, 'feed/index.html', {'page_obj': page_obj})
+
+
+@login_required
+def post(request,id):
+    return render(request, 'feed/post.html',  {'id':id})
+
 
 @login_required
 def profile(request,username):

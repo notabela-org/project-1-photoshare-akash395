@@ -10,6 +10,9 @@ class Profile(models.Model):
     image = models.ImageField(upload_to ='',default='/default.jpg', blank= True)
     bio = models.CharField(max_length=350)
 
+    def __str__(self):
+        return '{self.user} image: {self.image} bio: {self.bio}'
+
     def get_bio(self):
         return self.bio
 
@@ -22,6 +25,9 @@ class Post(models.Model):
     caption = models.CharField(max_length=700)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True, null = True)
+
+    def post_user(self):
+        return self.user
 
 class Comment(models.Model):
 
